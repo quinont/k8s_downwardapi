@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-deployment
+  labels:
+    app: example
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: example
+  template:
+    metadata:
+      labels:
+        app: example
+        custom-label: my-custom-value
+    spec:
+      containers:
+      - name: example-container
+        image: nginx:latest
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: CUSTOM_LABEL
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['custom-label']

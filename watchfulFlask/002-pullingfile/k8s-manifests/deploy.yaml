@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: watchfulflask
+  labels:
+    app: watchfulflask
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: watchfulflask
+  template:
+    metadata:
+      labels:
+        app: watchfulflask
+        config-log: info
+    spec:
+      containers:
+      - name: watchfulflask
+        image: quinont/watchfulflask:1pull
+        env:
+        - name: CONFIG_FILE
+          value: /etc/pod-info/config_log.txt
+        volumeMounts:
+        - name: labels-volume
+          mountPath: /etc/pod-info
+      volumes:
+      - name: labels-volume
+        downwardAPI:
+          items:
+          - path: config_log.txt
+            fieldRef:
+              fieldPath: metadata.labels['config-log']
